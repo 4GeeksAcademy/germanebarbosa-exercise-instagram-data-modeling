@@ -7,23 +7,53 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True, nullable=True)
+    user_name = Column(String(250), nullable=True)
+    password = Column(String(250))
+    followers_quantity = Column(Integer)
+    following_quantity = Column(Integer)
+    post_quantity = Column(Integer)
+    favorites_id = Column(Integer, ForeignKey('favorites.id'))
+    followers_id = Column(Integer, ForeignKey('followers.id'))
+    following_id = Column(Integer, ForeignKey('following.id'))
+    post_id = Column(Integer, ForeignKey('post.id'))
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+class Favorites(Base):
+    __tablename__ = 'favorites'
+    id = Column(Integer, primary_key=True, nullable=True)
+    post_id = Column(Integer, ForeignKey('post.id'))
+    post_img = Column(String(250))
+    user = relationship(User)
+
+class Followers(Base):
+    __tablename__ = 'followers'
+
+    id = Column(Integer, primary_key=True,nullable=True)
+    follower_user_name = Column(String(250), nullable=True)
+    user = relationship(User)
+
+class Following(Base):
+    __tablename__ = 'following'
+
+    id = Column(Integer, primary_key=True,nullable=True)
+    following_user_name = Column(String(250), nullable=True)
+    user = relationship(User)
+    
+class Post(Base):
+    __tablename__ = 'post'
+
+    id = Column(Integer, primary_key=True,nullable=True)
+    location = Column(String(250), nullable=True)
+    image = Column(String(250))
+    description = Column(String(250))
+    likes = Column(Integer)
+    comments = Column(String(250))
+    favorites = relationship(Favorites)
+    user = relationship(User)
+
+    
 
     def to_dict(self):
         return {}
